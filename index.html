@@ -91,7 +91,7 @@
             <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col justify-between">
                 <!-- Cart Header -->
                 <div class="p-6 border-b border-gray-200 flex items-center justify-between">
-                    <h2 class="text-xl font-bold text-gray-900">Your Cart (<span id="cart-count">0</span>)</h2>
+                    <h2 class="text-xl font-bold text-gray-900">Your Cart (<span id="drawer-cart-count">0</span>)</h2>
                     <button onclick="toggleCart()" class="text-gray-400 hover:text-gray-500 text-2xl font-bold">&times;</button>
                 </div>
                 
@@ -106,7 +106,7 @@
                         <span>Total:</span>
                         <span id="cart-total" class="text-indigo-600">0 ETB</span>
                     </div>
-                    <!-- Direct Telegram Sender (No extra page redirects, automatic link generation) -->
+                    <!-- Direct Telegram Sender -->
                     <button onclick="sendOrderDirectlyToTelegram()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition shadow-md flex items-center justify-center space-x-2">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27 0-.12.07-1.99 1.27-5.62 3.72-.53.36-1.01.54-1.44.53-.47-.02-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.35-.49.96-.75 3.78-1.65 6.31-2.74 7.59-3.27 3.61-1.51 4.36-1.77 4.85-1.78.11 0 .35.03.5.15.13.11.17.28.15.4z"/></svg>
                         <span>Send Order via Telegram</span>
@@ -122,7 +122,7 @@
         const SISTER_TELEGRAM_USERNAME = "JhonBaptistX"; 
         const SISTER_PHONE_NUMBER = "0900908646";
 
-        // Updated Product Catalog with requested categories
+        // Original Product Catalog
         const products = [
             { id: 1, name: "Grey Baggy Tuta Set", category: "Baggy Tuta", price: 650, image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&auto=format&fit=crop&q=60" },
             { id: 2, name: "Oversized Baggy Jeans", category: "Baggy Jeans", price: 750, image: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&auto=format&fit=crop&q=60" },
@@ -138,7 +138,7 @@
         let cart = [];
         let currentFilter = 'all';
 
-        // Render Products on Page Load with Sister's Phone Number below every cloth photo
+        // Render Products on Page Load with Two Options (Add to Cart & Direct Telegram Order)
         function renderProducts(filter = 'all') {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = '';
@@ -158,7 +158,7 @@
                             <h3 class="font-bold text-gray-900 text-base mb-1">${product.name}</h3>
                             <p class="text-indigo-600 font-extrabold text-lg mb-2">${product.price} ETB</p>
                             
-                            <!-- Sister's Phone Number displayed below every cloth photo with call option -->
+                            <!-- Sister's Phone Number displayed below every cloth photo -->
                             <div class="mb-3 pt-2 border-t border-gray-100 flex items-center justify-between text-xs text-gray-600">
                                 <span class="font-medium">ስልክ ለግዢ:</span>
                                 <a href="tel:${SISTER_PHONE_NUMBER}" class="font-bold text-indigo-600 hover:underline flex items-center space-x-1">
@@ -167,10 +167,18 @@
                                 </a>
                             </div>
                         </div>
-                        <button onclick="addToCart(${product.id})" class="w-full bg-gray-900 hover:bg-indigo-600 text-white py-2.5 rounded-xl font-medium text-sm transition shadow-sm flex items-center justify-center space-x-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                            <span>Add to Cart</span>
-                        </button>
+
+                        <!-- Two Options: Add to Cart & Direct Telegram Order below each picture -->
+                        <div class="space-y-2">
+                            <button onclick="addToCart(${product.id})" class="w-full bg-gray-900 hover:bg-indigo-600 text-white py-2.5 rounded-xl font-medium text-sm transition shadow-sm flex items-center justify-center space-x-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                <span>Add to Cart</span>
+                            </button>
+                            <button onclick="orderSingleItem(${product.id})" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-xl font-medium text-sm transition shadow-sm flex items-center justify-center space-x-2">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27 0-.12.07-1.99 1.27-5.62 3.72-.53.36-1.01.54-1.44.53-.47-.02-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.35-.49.96-.75 3.78-1.65 6.31-2.74 7.59-3.27 3.61-1.51 4.36-1.77 4.85-1.78.11 0 .35.03.5.15.13.11.17.28.15.4z"/></svg>
+                                <span>Order via Telegram</span>
+                            </button>
+                        </div>
                     </div>
                 `;
                 grid.appendChild(item);
@@ -207,7 +215,7 @@
 
         function updateCartUI() {
             const cartItemsContainer = document.getElementById('cart-items');
-            const cartCount = document.getElementById('cart-count');
+            const cartCount = document.getElementById('drawer-cart-count');
             const cartBadge = document.getElementById('cart-badge');
             const cartTotal = document.getElementById('cart-total');
 
@@ -245,11 +253,28 @@
 
             cartTotal.textContent = `${total} ETB`;
         }
+
         function toggleCart() {
             const drawer = document.getElementById('cart-drawer');
             drawer.classList.toggle('hidden');
         }
 
+        // Direct Order for a Single Item below photo
+        function orderSingleItem(productId) {
+            const product = products.find(p => p.id === productId);
+            let message = `🛍️ *NEW ORDER - H BONDA*\n\n`;
+            message += `🛒 *Item:* ${product.name} (${product.category})\n`;
+            message += `💰 *Price:* ${product.price} ETB\n`;
+            message += `📷 *Photo:* ${product.image}\n\n`;
+            message += `📞 *Sister Phone:* ${SISTER_PHONE_NUMBER}\n`;
+            message += `_Customer ordered this item directly from H BONDA web!_`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const telegramUrl = `https://t.me/${SISTER_TELEGRAM_USERNAME}?text=${encodedMessage}`;
+            window.open(telegramUrl, '_blank');
+        }
+
+        // Checkout Cart to Telegram
         function sendOrderDirectlyToTelegram() {
             if (cart.length === 0) {
                 alert("Please add items to your cart first!");
@@ -258,17 +283,17 @@
 
             let total = cart.reduce((sum, item) => sum + item.price, 0);
             
-            let message = `🛍️ *NEW ORDER - H BONDA*\n\n`;
+            let message = `🛍️ *NEW CART ORDER - H BONDA*\n\n`;
             message += `🛒 *Selected Clothes:* \n`;
             
             cart.forEach((item, index) => {
-                message += `${index + 1}. *${item.name}* (${item.category}) - *${item.price} ETB*\n`;
+                message += `${index + 1}. *${item.name} (${item.category})* - *${item.price} ETB*\n`;
                 message += `   📷 Photo: ${item.image}\n\n`;
             });
 
             message += `💰 *Total Amount:* ${total} ETB\n`;
             message += `📞 *Sister Phone:* ${SISTER_PHONE_NUMBER}\n`;
-            message += `_Customer selected these items directly from H BONDA web!_`;
+            message += `_Customer selected these items from cart on H BONDA web!_`;
 
             const encodedMessage = encodeURIComponent(message);
             const telegramUrl = `https://t.me/${SISTER_TELEGRAM_USERNAME}?text=${encodedMessage}`;
@@ -280,7 +305,6 @@
             toggleCart();
         }
 
-    
         renderProducts();
     </script>
 </body>
